@@ -5,7 +5,6 @@
  */
 package Mapa;
 
-import Objetos.Fruta;
 import Objetos.Pilula;
 import Objetos.Pontos;
 import Objetos.Fantasma;
@@ -23,8 +22,8 @@ import Pacman.Jogo;
 public class Mapa {
 
     private static Bloco[] tiles;
-    public static int WIDTH, HEIGHT;
-    public static final int TILE_SIZE = 16;
+    private static int WIDTH, HEIGHT;
+    private static final int TILE_SIZE = 16;
 
     public Mapa(String path) {
         try {
@@ -43,32 +42,28 @@ public class Mapa {
                             //Chao
                             tiles[xx + (yy * WIDTH)] = new Chao(xx * 16, yy * 16);
                             break;
-                        case 0xFFFFFFFF:
+                        case 0xFF0013FF:
                             //Parede
                             tiles[xx + (yy * WIDTH)] = new Parede(xx * 16, yy * 16);
                             break;
-                        case 0xFF0083FF:
-                            //Player
-                            Jogo.player.setX(xx * 16);
-                            Jogo.player.setY(yy * 16);
-                            break;
-                        case 0xFFFF0000:
+                        case 0xffff0000:
                             //Enemy
                             Fantasma en = new Fantasma(xx * 16, yy * 16, 16, 16);
-                            Jogo.entities.add(en);
-                            Jogo.enemies.add(en);
+                            Jogo.getObjJogo().add(en);//
+                            Jogo.getFantasmas().add(en);
                             break;
-                        case 0xFF4EE829:
-                            //Fruta
-                            Jogo.entities.add(new Fruta(xx * 16, yy * 16, 16, 16));
-                            break;
-                        case 0xFFFFE100:
+                        case 0xFFc7c7c7:
                             //Pilula
-                            Jogo.entities.add(new Pilula(xx * 16, yy * 16, 16, 16));
+                            Jogo.getObjJogo().add(new Pilula(xx * 16, yy * 16, 16, 16));
                             break;
-                        case 0xFFF7B126:
+                        case 0xFFffffff:
                             //Pontos
-                            Jogo.entities.add(new Pontos(xx * 16, yy * 16, 16, 16));
+                            Jogo.getObjJogo().add(new Pontos(xx * 16, yy * 16, 16, 16));
+                            break;
+                        case 0xFFFFd600:
+                            //Player
+                            Jogo.getPacman().setX(xx * 16);
+                            Jogo.getPacman().setY(yy * 16);
                             break;
                         default:
                             break;
@@ -105,7 +100,7 @@ public class Mapa {
     }
     */
     //Colisao
-    public static boolean isFree(int xNext, int yNext) {
+    public static boolean colide(int xNext, int yNext) {
         int x1 = xNext / TILE_SIZE;
         int y1 = yNext / TILE_SIZE;
 
@@ -122,6 +117,18 @@ public class Mapa {
                 || (tiles[x2 + (y2 * Mapa.WIDTH)] instanceof Parede)
                 || (tiles[x3 + (y3 * Mapa.WIDTH)] instanceof Parede)
                 || (tiles[x4 + (y4 * Mapa.WIDTH)] instanceof Parede));
+    }
+    
+    public static boolean colideEsqDir(int X){
+        if(X + TILE_SIZE > TILE_SIZE)
+            return true; //Colide direita
+        if(X - TILE_SIZE > TILE_SIZE)
+            return true; //Colide esquerda
+        return false;
+    }
+    
+    public static boolean colideCimBaix(){
+        return false;
     }
 
 }
