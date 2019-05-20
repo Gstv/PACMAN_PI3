@@ -8,7 +8,6 @@ package Pacman;
 import Objetos.Objetos;
 import Objetos.Player;
 import Objetos.Fantasma;
-import Graficos.Spritesheet;
 import Mapa.Mapa;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -33,23 +32,20 @@ public class Jogo extends Canvas implements Runnable, KeyListener {
     public static JFrame frame;
     private Thread thread;
     private boolean isRunning = true;
-    public static final int largura = 52 * 16;
-    public static final int altura = 31 * 16;
-    public static final int SCALE = 1;
-
-    private int CUR_LEVEL = 1, MAX_LEVEL = 2;
+    private static final int largura = 21 * 16;
+    private static final int altura = 27 * 16 + 32;
+    private static final int SCALE = 1; //Manter essa variavel, ela eh poderosissima para mudar o tamanho do game
 
     private BufferedImage image;
 
-    public static List<Objetos> entities;
-    public static List<Fantasma> enemies;
-    public static Spritesheet spritesheet;
+    private static List<Objetos> objJogo;
+    private static List<Fantasma> fantasmas;
 
-    public static Mapa world;
+    private static Mapa mapa;
 
-    public static Player player;
+    private static Player pacman;
 
-    public static Random rand;
+    private static Random rand;
 
     public Jogo() {
         rand = new Random();
@@ -58,12 +54,11 @@ public class Jogo extends Canvas implements Runnable, KeyListener {
         initFrame();
         //Inicializa objetos
         image = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_RGB);
-        entities = new ArrayList<>();
-        enemies = new ArrayList<>();
-        spritesheet = new Spritesheet("/res/spritesheet.png");
-        player = new Player(0, 0, 16, 16);
-        entities.add(player);
-        world = new Mapa("/res/level1.png");
+        objJogo = new ArrayList<>();
+        fantasmas = new ArrayList<>();
+        pacman = new Player(0, 0, 16, 16);
+        objJogo.add(pacman);
+        mapa = new Mapa("/res/level1.png");
     }
 
     public static void main(String[] args) {
@@ -73,6 +68,7 @@ public class Jogo extends Canvas implements Runnable, KeyListener {
 
     @Override
     public void run() {
+        //Game loop nao colocar mais nada aqui, toda logica deve ser implementadata no metodo tick
         long lastTime = System.nanoTime();
         double amountOfTicks = 60.0;
         double ns = 1000000000 / amountOfTicks;
@@ -100,8 +96,8 @@ public class Jogo extends Canvas implements Runnable, KeyListener {
     }
 
     public void tick() {
-        for (int i = 0; i < entities.size(); i++) {
-            Objetos e = entities.get(i);
+        for (int i = 0; i < objJogo.size(); i++) {
+            Objetos e = objJogo.get(i);
             e.tick();
         }
 
@@ -116,13 +112,19 @@ public class Jogo extends Canvas implements Runnable, KeyListener {
         Graphics g = image.getGraphics();
         g.setColor(new Color(0, 0, 0));
         g.fillRect(0, 0, largura, altura);
-
-        world.render(g);
-        for (int i = 0; i < entities.size(); i++) {
-            Objetos e = entities.get(i);
+        //Renderiza o mapa
+        mapa.render(g);
+        //Desenha objetos herdados da classe objeto, pontos, pacman, fantasma e etc
+        for (int i = 0; i < objJogo.size(); i++) {
+            Objetos e = objJogo.get(i);
             e.render(g);
         }
-     
+
+        //Desenha UI(Score e vidas)
+        g.setColor(Color.white);
+        g.drawString("SCORE:" + pacman.getScore(), 0, altura - 12);
+        g.drawString("LIVES:" + pacman.getVidas(), largura - 48, altura - 12);
+
         g.dispose();
         g = bs.getDrawGraphics();
         g.drawImage(image, 0, 0, largura * SCALE, altura * SCALE, null);
@@ -164,14 +166,30 @@ public class Jogo extends Canvas implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-             player.setRight(true);
+            //Direita
+            if(Mapa.colideEsqDir((int)(pacman.getX() + pacman.getVelocidadeX()))){
+                System.out.println("Entrei no if");
+                pacman.setVelocidadeX(2.0);
+                pacman.setVelocidadeY(0);
+            }
+              
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            player.setLeft(true);
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-             player.setUp(true);
+                //Esquerda
+            if(Mapa.colideEsqDir((int)(pacman.getX() + pacman.getVelocidadeX()))){
+                System.out.println("Entrei no if");
+                pacman.setVelocidadeX(-2.0);
+                pacman.setVelocidadeY(0);
+            }
+            
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            //Cima
+            pacman.setVelocidadeX(0);
+            pacman.setVelocidadeY(-2.0);
+
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-             player.setDown(true);
+            //Baixo
+            pacman.setVelocidadeX(0);
+            pacman.setVelocidadeY(2.0);
         }
     }
 
@@ -188,14 +206,16 @@ public class Jogo extends Canvas implements Runnable, KeyListener {
         return altura;
     }
 
-    public static List<Objetos> getEntities() {
-        return entities;
+    public static List<Objetos> getObjJogo() {
+        return objJogo;
     }
 
-    public static List<Fantasma> getEnemies() {
-        return enemies;
+    public static List<Fantasma> getFantasmas() {
+        return fantasmas;
     }
-    
-    
+
+    public static Player getPacman() {
+        return pacman;
+    }
 
 }

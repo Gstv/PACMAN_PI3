@@ -18,8 +18,9 @@ public class Player extends Objetos {
 
     private int x;
     private int y;
-    private boolean right, up, left, down, moved;
-    private double speed = 1.4;
+    private double velocidadeX = 0.6, velocidadeY = 0.6;
+    private int vidas = 3;
+    private int score = 0;
 
     public Player(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -34,6 +35,22 @@ public class Player extends Objetos {
         return x;
     }
 
+    public double getVelocidadeX() {
+        return velocidadeX;
+    }
+
+    public void setVelocidadeX(double velocidadeX) {
+        this.velocidadeX = velocidadeX;
+    }
+
+    public double getVelocidadeY() {
+        return velocidadeY;
+    }
+
+    public void setVelocidadeY(double velocidadeY) {
+        this.velocidadeY = velocidadeY;
+    }
+    
     public void setX(int x) {
         this.x = x;
     }
@@ -46,79 +63,50 @@ public class Player extends Objetos {
         this.y = y;
     }
 
-    public void setRight(boolean right) {
-        this.right = right;
+    public int getScore() {
+        return score;
     }
 
-    public void setUp(boolean up) {
-        this.up = up;
+    public void setScore(int score) {
+        this.score = score;
     }
 
-    public void setLeft(boolean left) {
-        this.left = left;
+    public int getVidas() {
+        return vidas;
+    }
+
+    public void setVidas(int vidas) {
+        this.vidas = vidas;
     }
     
-    public void setDown(boolean down) {
-        this.down = down;
-    }
+
     
-/*
+    //Acrescentar aqui, logica para colisao com a pilula de poder e frutas
     public void coletaItem() {
-        for (int i = 0; i < Jogo.getEntities().size(); i++) {
-            Objetos atual = Jogo.getEntities().get(i);
+        for (int i = 0; i < Jogo.getObjJogo().size(); i++) {
+            Objetos atual = Jogo.getObjJogo().get(i);
             if (atual instanceof Pontos) {
                 if (Objetos.isColliding(this, atual)) {
-                    // System.out.println("AMMO: "+ammo);
-                    Jogo.getEntities().remove(atual);
+                    this.score += 10;
+                    Jogo.getObjJogo().remove(atual);
                 }
-            } else if (atual instanceof Pilula) {
-                if (Objetos.isColliding(this, atual)) {
-                    // System.out.println("AMMO: "+ammo);
-                    Jogo.getEntities().remove(atual);
-                }
-            } else if (atual instanceof Fruta) {
-                if (Objetos.isColliding(this, atual)) {
-                    // System.out.println("AMMO: "+ammo);
-                    Jogo.getEntities().remove(atual);
-                }
-            }
-        }
+            } 
+            }  
     }
-*/
+
     @Override
     public void tick() {
-        if (right && Mapa.isFree((int) (x + speed), this.getY())) {
-            moved = true;
-            left = false;
-            up = false;
-            down = false;
-            this.x += speed;
-        } else if (left && Mapa.isFree((int) (x - speed), this.getY())) {
-            moved = true;
-            right = false;
-            up = false;
-            down = false;
-            this.x -= speed;
+        if(Mapa.colide((int) (x + velocidadeX),(int) (y + velocidadeY))){
+            this.x += velocidadeX;
+            this.y += velocidadeY;
         }
-        else if (up && Mapa.isFree(this.getX(), (int) (y - speed))) {
-            moved = true;
-            right = false;
-            left = false;
-            down = false;
-            this.y -= speed;
-        }  else if (down && Mapa.isFree(this.getX(), (int) (y + speed))) {
-            moved = true;
-            right = false;
-            left = false;
-            up = false;
-            this.y += speed;
-        }
-        //coletaItem();
+            
+        coletaItem();
         //Verifica margens
         if (x > Jogo.getLargura() - 18) {
             this.x = 0;
         } else if (this.x < 0) {
-            x = Jogo.getLargura();
+            x = Jogo.getLargura() - 18;
         }
     }
     
