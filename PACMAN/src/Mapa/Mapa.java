@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import Pacman.Jogo;
 
-
 /**
  *
  * @author Guilherme Delmondes
@@ -26,7 +25,7 @@ public class Mapa {
             HEIGHT = map.getHeight();
             tiles = new Bloco[pixels.length];
             map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
-            
+
             for (int xx = 0; xx < map.getWidth(); xx++) {
                 for (int yy = 0; yy < map.getHeight(); yy++) {
                     int pixelAtual = pixels[xx + (yy * map.getWidth())];
@@ -38,7 +37,13 @@ public class Mapa {
                             break;
                         case 0xFF0013FF:
                             //Parede
-                            tiles[xx + (yy * WIDTH)] = new Parede(xx * 16, yy * 16, Bloco.TILE_WALL);
+                            if(Jogo.getFase() == 1){
+                                tiles[xx + (yy * WIDTH)] = new Parede(xx * 16, yy * 16, Bloco.TILE_WALL1);
+                            } else if(Jogo.getFase() == 2){
+                                tiles[xx + (yy * WIDTH)] = new Parede(xx * 16, yy * 16, Bloco.TILE_WALL2);
+                            }else if(Jogo.getFase() == 3){
+                                tiles[xx + (yy * WIDTH)] = new Parede(xx * 16, yy * 16, Bloco.TILE_WALL3);
+                            }
                             break;
                         case 0xffff0000:
                             //Enemy
@@ -53,6 +58,10 @@ public class Mapa {
                         case 0xFFffffff:
                             //Pontos
                             Jogo.getObjJogo().add(new Pontos(xx * 16, yy * 16, 16, 16, Objetos.PONTOS_SPRITE));
+                            break;
+                        case 0xFFff4900:
+                            //Fruta
+                            Jogo.getObjJogo().add(new Fruta(xx * 16, yy * 16, 16, 16, Objetos.FRUTA_SPRITE));
                             break;
                         case 0xFFFFd600:
                             //Player
@@ -79,8 +88,8 @@ public class Mapa {
         world = new World("/res/" + level);
         return;
     }
-    */
-    
+     */
+
     public static boolean colide(int xNext, int yNext) {
         int x1 = xNext / TILE_SIZE;
         int y1 = yNext / TILE_SIZE;
@@ -94,12 +103,12 @@ public class Mapa {
         int x4 = (xNext + TILE_SIZE - 1) / TILE_SIZE;
         int y4 = (yNext + TILE_SIZE - 1) / TILE_SIZE;
 
-        return !((tiles[x1 + (y1 * Mapa.WIDTH)] instanceof Parede)
+        return ((tiles[x1 + (y1 * Mapa.WIDTH)] instanceof Parede)
                 || (tiles[x2 + (y2 * Mapa.WIDTH)] instanceof Parede)
                 || (tiles[x3 + (y3 * Mapa.WIDTH)] instanceof Parede)
                 || (tiles[x4 + (y4 * Mapa.WIDTH)] instanceof Parede));
     }
-    
+
     public void render(Graphics g) {
         for (int xx = 0; xx <= WIDTH; xx++) {
             for (int yy = 0; yy <= HEIGHT; yy++) {
@@ -111,11 +120,11 @@ public class Mapa {
             }
         }
     }
-    
+
     public static Bloco[] getTiles() {
         return tiles;
     }
-    
+
     public static int getWIDTH() {
         return WIDTH;
     }
