@@ -7,7 +7,9 @@ import java.awt.image.BufferedImage;
 public class Bloco {
 	
     public static BufferedImage TILE_FLOOR = Jogo.spritesheet.getSprite(144,16,16,16);
-    public static BufferedImage TILE_WALL = Jogo.spritesheet.getSprite(144,0,16,16);
+    public static BufferedImage TILE_WALL1 = Jogo.spritesheet.getSprite(144,0,16,16);
+    public static BufferedImage TILE_WALL2 = Jogo.spritesheet.getSprite(128,32,16,16);
+    public static BufferedImage TILE_WALL3 = Jogo.spritesheet.getSprite(144,32,16,16);
 
     private BufferedImage sprite;
     private int x,y;
@@ -23,4 +25,12 @@ public class Bloco {
         g.drawImage(sprite, x - Camera.x, y - Camera.y, null);
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+    
 }

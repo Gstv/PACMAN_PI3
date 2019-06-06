@@ -17,10 +17,10 @@ import java.util.List;
  */
 public class Objetos {
 
-    public static BufferedImage FANTASMA_EN = Jogo.spritesheet.getSprite(7*16,16,16,16);
+    public static BufferedImage FANTASMA_EN = Jogo.spritesheet.getSprite(16,16,16,16);
     public static BufferedImage PILULA_SPRITE = Jogo.spritesheet.getSprite(128,0,16,16);
     public static BufferedImage PONTOS_SPRITE = Jogo.spritesheet.getSprite(128,16,16,16);
-    public static BufferedImage FRUTA_SPRITE = Jogo.spritesheet.getSprite(16,32,16,16);
+    public static BufferedImage FRUTA_SPRITE = Jogo.spritesheet.getSprite(16,48,16,16); // trocar
     
     protected int x;
     protected int y;
